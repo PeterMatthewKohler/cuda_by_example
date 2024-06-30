@@ -1,9 +1,5 @@
 #include "CudaRosNode_impl.hpp"
 
-// Forward declaration of cuda lib functions
-// void cudaAdd(int *c);
-// void cudaPrintDeviceProperties();
-
 namespace cuda_ros_node
 {
 CudaRosNode::CudaRosNode(const rclcpp::NodeOptions& options) : Node("cuda_ros_node", options)
@@ -26,7 +22,6 @@ void CudaRosNode::timer_callback()
     // Cleanup
     free(ptr);
 }
-awefawef
 } // namespace cuda_ros_node
 
 // Register the class with the component factory

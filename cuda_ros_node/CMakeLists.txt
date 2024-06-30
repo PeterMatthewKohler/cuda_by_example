@@ -50,7 +50,7 @@ ament_target_dependencies(CudaRosNode_lib
   std_msgs
   CUDA
 )
-# CUDA FUNCTIONS MUST BE IN A STATIC LIBRARY
+# CUDA KERNELS MUST BE IN A STATIC LIBRARY
 # https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#libraries
 set(LIB_TYPE STATIC)
 cuda_add_library(CudaLib ${LIB_TYPE} src/Add.cu)
