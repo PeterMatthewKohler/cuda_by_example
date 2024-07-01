@@ -6,25 +6,36 @@
 
 
 namespace cuda_ros_node {
-__global__ void add(int a, int b, int* c)
+__global__ void add(int* a, int* b, int* c, int* arrSize)
 {
-    *c = a + b;
+    int tid = blockIdx.x; // Perform operation on this index
+    if(tid < *arrSize)
+    {
+        c[tid] = a[tid] + b[tid];
+    }
 }
 
-void cudaAdd(int* c)
+void cudaAdd(int* a, int* b, int* c, int arrSize)
 {
-    //int a = 5, b = 12; // Host copies of a, b, c
-    int* dev_c; // Device copies of a, b, c
-    // Alloc space for device copies of c
-    cudaMalloc((void **)&dev_c, sizeof(int));
+    // Pointers to the memory we will allocate on the device
+    int *dev_a, *dev_b, *dev_c, *dev_ArrSize;
+
+    // Allocate the memory on the device
+    cudaMalloc((void **)&dev_a, arrSize * sizeof(int));
+    cudaMalloc((void **)&dev_b, arrSize * sizeof(int));
+    cudaMalloc((void **)&dev_c, arrSize * sizeof(int));
+    cudaMalloc((void **)&dev_ArrSize, sizeof(int));
     // Copy inputs to device
-    // cudaMemcpy(dev_a, a, size, cudaMemcpyHostToDevice);
-    // cudaMemcpy(dev_b, b, size, cudaMemcpyHostToDevice);
+    cudaMemcpy(dev_a, a, arrSize * sizeof(int), cudaMemcpyHostToDevice);
+    cudaMemcpy(dev_b, b, arrSize * sizeof(int), cudaMemcpyHostToDevice);
+    cudaMemcpy(dev_ArrSize, &arrSize, sizeof(int), cudaMemcpyHostToDevice);
     // Launch add() kernel
-    add<<<1,1>>>(5, 12, dev_c);
+    add<<<arrSize,1>>>(dev_a, dev_b, dev_c, dev_ArrSize);
     // Copy results back to the host
-    cudaMemcpy(c, dev_c, sizeof(int), cudaMemcpyDeviceToHost);
+    cudaMemcpy(c, dev_c, arrSize * sizeof(int), cudaMemcpyDeviceToHost);
     // Cleanup allocated memory
+    cudaFree(dev_a);
+    cudaFree(dev_b);
     cudaFree(dev_c);
     return;
 }

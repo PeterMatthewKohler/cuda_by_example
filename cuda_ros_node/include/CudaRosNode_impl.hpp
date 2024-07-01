@@ -4,11 +4,11 @@
 #include <string>
 
 #include <rclcpp/rclcpp.hpp>
-#include <std_msgs/msg/float32.hpp>
+#include <std_msgs/msg/int16_multi_array.hpp>
 
 namespace cuda_ros_node {
     // Cuda functions prototypes so we can use the functions defined in the Cuda lib
-    void cudaAdd(int *c);
+    void cudaAdd(int *a, int *b, int *c, int arrSize);
     void cudaPrintDeviceProperties();
 
     class CudaRosNode : public rclcpp::Node
@@ -19,7 +19,7 @@ namespace cuda_ros_node {
         private:
             void timer_callback();
             rclcpp::TimerBase::SharedPtr timer_;
-            rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr publisher_;
+            rclcpp::Publisher<std_msgs::msg::Int16MultiArray>::SharedPtr publisher_;
             size_t count_;
     };
 }
