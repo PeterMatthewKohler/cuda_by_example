@@ -5,18 +5,17 @@ namespace cuda_ros_node
 {
 CudaRosNode::CudaRosNode(const rclcpp::NodeOptions& options) : Node("cuda_ros_node", options)
 {
-    publisher_ = this->create_publisher<std_msgs::msg::Int16MultiArray>("/CudaOutputTopic", 10);
+    publisher_ = this->create_publisher<std_msgs::msg::Int64MultiArray>("/CudaOutputTopic", 10);
     timer_ = this->create_wall_timer(std::chrono::seconds(1), std::bind(&CudaRosNode::timer_callback, this));
-    count_ = 0;
     // Print the device properties
     cudaPrintDeviceProperties();
 }
 
 void CudaRosNode::timer_callback()
 {
-    auto msg = std_msgs::msg::Int16MultiArray();
+    auto msg = std_msgs::msg::Int64MultiArray();
     // Run the cuda code
-    int size = 10;
+    int size = 1025;    // # Threads in block for my 3070 is 1024
     // Arrays to store our data to be added together
     std::vector<int> a, b;
     // Array to store our output

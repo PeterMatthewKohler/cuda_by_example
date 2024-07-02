@@ -30,3 +30,9 @@ Edward Kandrot is a senior software engineer on NVIDIA’s CUDA Algorithms team,
 
 
 https://developer.nvidia.com/cuda-example
+
+# Compiling with dependencies
+Example w/ glut:
+```
+nvcc ripple.cu -lglut -lGLU -lGL -o ripple
+```

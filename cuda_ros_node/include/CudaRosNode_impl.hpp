@@ -4,7 +4,7 @@
 #include <string>
 
 #include <rclcpp/rclcpp.hpp>
-#include <std_msgs/msg/int16_multi_array.hpp>
+#include <std_msgs/msg/int64_multi_array.hpp>
 
 namespace cuda_ros_node {
     // Cuda functions prototypes so we can use the functions defined in the Cuda lib
@@ -19,7 +19,6 @@ namespace cuda_ros_node {
         private:
             void timer_callback();
             rclcpp::TimerBase::SharedPtr timer_;
-            rclcpp::Publisher<std_msgs::msg::Int16MultiArray>::SharedPtr publisher_;
-            size_t count_;
+            rclcpp::Publisher<std_msgs::msg::Int64MultiArray>::SharedPtr publisher_;
     };
 }
