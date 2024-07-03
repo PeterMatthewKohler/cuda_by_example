@@ -5,13 +5,17 @@ namespace cuda_ros_node
 {
 CudaRosNode::CudaRosNode(const rclcpp::NodeOptions& options) : Node("cuda_ros_node", options)
 {
-    publisher_ = this->create_publisher<std_msgs::msg::Int64MultiArray>("/CudaOutputTopic", 10);
-    timer_ = this->create_wall_timer(std::chrono::seconds(1), std::bind(&CudaRosNode::timer_callback, this));
+    // Create our vector addition publisher and callback
+    addPublisher = this->create_publisher<std_msgs::msg::Int64MultiArray>("/CudaAddOutputTopic", 10);
+    addTimer = this->create_wall_timer(std::chrono::seconds(1), std::bind(&CudaRosNode::addTimerCallback, this));
+    // Create our dot product publisher and callback
+    dotPublisher = this->create_publisher<std_msgs::msg::Float32>("/CudaDotOutputTopic", 10);
+    dotTimer = this->create_wall_timer(std::chrono::seconds(1), std::bind(&CudaRosNode::dotTimerCallback, this));
     // Print the device properties
     cudaPrintDeviceProperties();
 }
 
-void CudaRosNode::timer_callback()
+void CudaRosNode::addTimerCallback()
 {
     auto msg = std_msgs::msg::Int64MultiArray();
     // Run the cuda code
@@ -32,7 +36,18 @@ void CudaRosNode::timer_callback()
     {
         msg.data.push_back(val);
     }
-    publisher_->publish(msg);
+    addPublisher->publish(msg);
+}
+
+void CudaRosNode::dotTimerCallback()
+{
+    auto msg = std_msgs::msg::Float32();
+    // Run the cuda code
+    // Arrays to store our data
+    std::vector<float> a = {1, 2, 3, 4}; 
+    std::vector<float> b = {4, 5, 6, 7};
+    msg.data = cudaDot(&a[0], &b[0], a.size());
+    dotPublisher->publish(msg);
 }
 } // namespace cuda_ros_node
 

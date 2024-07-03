@@ -53,7 +53,9 @@ ament_target_dependencies(CudaRosNode_lib
 # CUDA KERNELS MUST BE IN A STATIC LIBRARY
 # https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#libraries
 set(LIB_TYPE STATIC)
-cuda_add_library(CudaLib ${LIB_TYPE} src/Add.cu)
+cuda_add_library(CudaLib ${LIB_TYPE} 
+                  src/Add.cu
+                  src/Dot.cu)
 
 cuda_add_executable(CudaRosNode_exe
   src/CudaRosNode_main.cpp
