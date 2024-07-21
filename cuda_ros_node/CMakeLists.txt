@@ -12,6 +12,7 @@ find_package(ament_cmake_auto REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 find_package(CUDA REQUIRED)
 
 set(CMAKE_C_COMPILER /usr/bin/gcc)
@@ -48,14 +49,24 @@ ament_target_dependencies(CudaRosNode_lib
   rclcpp
   rclcpp_components
   std_msgs
+  sensor_msgs
   CUDA
 )
 # CUDA KERNELS MUST BE IN A STATIC LIBRARY
 # https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#libraries
 set(LIB_TYPE STATIC)
-cuda_add_library(CudaLib ${LIB_TYPE} 
+cuda_add_library(CudaLib ${LIB_TYPE}
+                  include/CPUBitmap.h
                   src/Add.cu
-                  src/Dot.cu)
+                  src/Dot.cu
+                  src/Ray.cu
+)
+
+target_include_directories(CudaLib PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+  ${CUDA_INCLUDE_DIRS}
+)
 
 cuda_add_executable(CudaRosNode_exe
   src/CudaRosNode_main.cpp

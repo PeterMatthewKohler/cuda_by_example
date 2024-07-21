@@ -11,6 +11,10 @@ CudaRosNode::CudaRosNode(const rclcpp::NodeOptions& options) : Node("cuda_ros_no
     // Create our dot product publisher and callback
     dotPublisher = this->create_publisher<std_msgs::msg::Float32>("/CudaDotOutputTopic", 10);
     dotTimer = this->create_wall_timer(std::chrono::seconds(1), std::bind(&CudaRosNode::dotTimerCallback, this));
+    // Create our ray tracing publisher and callback
+    rayTraceImgPublisher = this->create_publisher<sensor_msgs::msg::Image>("/RayTraceOutputTopic", 10);
+    std::chrono::duration<double> rayTracePeriod(1.0 / 30.0); // 30 Hz (1/30 = 0.0333333...)
+    rayTraceTimer = this->create_wall_timer(rayTracePeriod, std::bind(&CudaRosNode::rayTraceTimerCallback, this));
     // Print the device properties
     cudaPrintDeviceProperties();
 }
@@ -48,6 +52,22 @@ void CudaRosNode::dotTimerCallback()
     std::vector<float> b = {4, 5, 6, 7};
     msg.data = cudaDot(&a[0], &b[0], a.size());
     dotPublisher->publish(msg);
+}
+
+void CudaRosNode::rayTraceTimerCallback()
+{
+    auto msg = sensor_msgs::msg::Image();
+    // Run the cuda code
+    CPUBitmap* bitmap = rayTrace();
+    // Fill the message with the bitmap data
+    msg.width = bitmap->x;
+    msg.height = bitmap->y;
+    msg.encoding = "rgba8";
+    msg.step = bitmap->x * 4;
+    msg.data = std::vector<uint8_t>(bitmap->pixels, bitmap->pixels + bitmap->image_size());
+    rayTraceImgPublisher->publish(msg);
+    // Cleanup
+    delete bitmap;
 }
 } // namespace cuda_ros_node
 

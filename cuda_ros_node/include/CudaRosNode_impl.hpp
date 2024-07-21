@@ -1,17 +1,20 @@
 #include <chrono>
 #include <functional>
 #include <memory>
-#include <string>
+
+#include "CPUBitmap.h"
 
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/int64_multi_array.hpp>
 #include <std_msgs/msg/float32.hpp>
+#include <sensor_msgs/msg/image.hpp>
 
 namespace cuda_ros_node {
     // Cuda functions prototypes so we can use the functions defined in the Cuda lib
     void cudaAdd(int *a, int *b, int *c, int arrSize);
     float cudaDot(float* a, float* b, int arrSize);
     void cudaPrintDeviceProperties();
+    CPUBitmap* rayTrace();
 
     class CudaRosNode : public rclcpp::Node
     {
@@ -25,5 +28,8 @@ namespace cuda_ros_node {
             void dotTimerCallback();
             rclcpp::TimerBase::SharedPtr dotTimer;
             rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr dotPublisher;
+            void rayTraceTimerCallback();
+            rclcpp::TimerBase::SharedPtr rayTraceTimer;
+            rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr rayTraceImgPublisher;
     };
 }
