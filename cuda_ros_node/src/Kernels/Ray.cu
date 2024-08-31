@@ -8,6 +8,11 @@
 
 namespace cuda_ros_node {
 
+// globals needed by the update routine
+struct RayDataBlock {
+    unsigned char   *dev_bitmap;
+};
+
 struct Sphere {
     float   r,b,g;
     float   radius;
@@ -56,7 +61,7 @@ __global__ void kernel( unsigned char *ptr ) {
 
 CPUBitmap* rayTrace()
 {
-    DataBlock data;
+    RayDataBlock data;
     CPUBitmap bitmap( DIM, DIM, &data );
     unsigned char *dev_bitmap;
 

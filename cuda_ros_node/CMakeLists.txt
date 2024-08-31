@@ -57,9 +57,10 @@ ament_target_dependencies(CudaRosNode_lib
 set(LIB_TYPE STATIC)
 cuda_add_library(CudaLib ${LIB_TYPE}
                   include/CPUBitmap.h
-                  src/Add.cu
-                  src/Dot.cu
-                  src/Ray.cu
+                  src/Kernels/Add.cu
+                  src/Kernels/Dot.cu
+                  src/Kernels/Ray.cu
+                  src/Kernels/Histogram.cu
 )
 
 target_include_directories(CudaLib PUBLIC
@@ -110,5 +111,11 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
+
+# Add launch files to the installation
+install(DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME}
+)
 
 ament_package()

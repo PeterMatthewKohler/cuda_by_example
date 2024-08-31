@@ -13,8 +13,9 @@ namespace cuda_ros_node {
     // Cuda functions prototypes so we can use the functions defined in the Cuda lib
     void cudaAdd(int *a, int *b, int *c, int arrSize);
     float cudaDot(float* a, float* b, int arrSize);
-    void cudaPrintDeviceProperties();
     CPUBitmap* rayTrace();
+    void cudaPrintDeviceProperties();
+    void compute_histogram(unsigned char* inputBuffer, std::size_t inputBufferSize, unsigned int* histogram);
 
     class CudaRosNode : public rclcpp::Node
     {
@@ -31,5 +32,8 @@ namespace cuda_ros_node {
             void rayTraceTimerCallback();
             rclcpp::TimerBase::SharedPtr rayTraceTimer;
             rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr rayTraceImgPublisher;
+            void computeHistogramTimerCallback();
+            rclcpp::TimerBase::SharedPtr computeHistogramTimer;
+            rclcpp::Publisher<std_msgs::msg::Int64MultiArray>::SharedPtr computeHistogramPublisher;
     };
 }
